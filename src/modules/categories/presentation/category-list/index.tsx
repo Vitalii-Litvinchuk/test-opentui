@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useCategoryStore } from "../store/useCategoryStore";
 import { useRouterStore } from "../../../../components/router/store/useRouterStore";
 import { Routes } from "../../../../core/router/constants";
+import { Focusable, FocusableList } from "../../../../components/focusable";
 
 
 export function CategoryList() {
@@ -24,20 +25,38 @@ export function CategoryList() {
                     <text attributes={TextAttributes.DIM}>No categories found...</text>
                 )}
 
-                {categories.map((c) => (
-                    <box key={c.id}>
-                        <text attributes={TextAttributes.BOLD}>- {c.name}</text>
-                    </box>
-                ))}
+                <FocusableList
+                    items={categories}
+                    visibleCount={5}
+                    renderItem={(c, isSelected) => (
+                        <box>
+                            <text
+                                style={{
+                                    fg: isSelected ? "black" : "white",
+                                    bg: isSelected ? "cyan" : "transparent"
+                                }}
+                                attributes={TextAttributes.BOLD}
+                            >
+                                {isSelected ? "> " : "- "}{c.name}
+                            </text>
+                        </box>
+                    )}
+                />
             </box>
 
-            <box
-                onMouseDown={() => navigate(Routes.CATEGORIES.ADD)}
-                marginTop={2} borderStyle="rounded" borderColor="green" padding={1}>
-                <text attributes={TextAttributes.BOLD}>
-                    [ + ] ADD NEW CATEGORY
-                </text>
-            </box>
+            <Focusable onAction={() => navigate(Routes.CATEGORIES.ADD)}>
+                {(isFocused) => (
+                    <box
+                        marginTop={2} borderStyle="rounded" borderColor={isFocused ? "cyan" : "green"} padding={1}>
+                        <text
+                            style={{ fg: isFocused ? "cyan" : "white" }}
+                            attributes={TextAttributes.BOLD}
+                        >
+                            {isFocused ? "> " : "  "}[ + ] ADD NEW CATEGORY
+                        </text>
+                    </box>
+                )}
+            </Focusable>
         </box>
     );
 }
