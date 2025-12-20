@@ -54,8 +54,9 @@ export function TodoList() {
                             attributes={t.completed ? TextAttributes.BOLD : TextAttributes.DIM}
                             onMouseDown={() => toggleTodo(t.id, t.completed)}
                         >
-                            [{t.completed ? "x" : " "}] {t.content} {moment(t.createdAt).fromNow()}
+                            [{t.completed ? "x" : " "}] {t.content} {t.category ? `(${t.category.name}) ` : ""}{moment(t.createdAt).fromNow()}
                         </text>
+
                         <text marginLeft={2} attributes={TextAttributes.BOLD} style={{ fg: "red" }} onMouseDown={() => deleteTodo(t.id)}> (del)</text>
                     </box>
                 ))}
@@ -72,6 +73,15 @@ export function TodoList() {
                     [ + ] ADD NEW TASK
                 </text>
             </box>
+
+            <box
+                onMouseDown={() => navigate(Routes.CATEGORIES.LIST)}
+                marginTop={1} borderStyle="single" borderColor="blue" padding={1}>
+                <text attributes={TextAttributes.BOLD}>
+                    [ G ] GO TO CATEGORIES
+                </text>
+            </box>
         </box>
+
     );
 }

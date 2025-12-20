@@ -15,7 +15,7 @@ interface TodoState {
     error: AppError | null;
 
     fetchTodos: () => Promise<void>;
-    addTodo: (content: string) => Promise<Result<Todo>>;
+    addTodo: (content: string, categoryId?: number) => Promise<Result<Todo>>;
     toggleTodo: (id: number, currentStatus: boolean) => Promise<void>;
     deleteTodo: (id: number) => Promise<void>;
 }
@@ -37,11 +37,12 @@ export const useTodoStore = create<TodoState>((set, get) => ({
         }
     },
 
-    addTodo: async (content: string): Promise<Result<Todo>> => {
-        const result = await mediator.send(new CreateTodoCommand(content));
+    addTodo: async (content: string, categoryId?: number): Promise<Result<Todo>> => {
+        const result = await mediator.send(new CreateTodoCommand(content, categoryId));
 
         if (result.isSuccess) {
             set((state) => ({ todos: [...state.todos, result.getValue()] }));
+
         } else {
             useErrorStore.getState().addError(result.error);
             set({ error: result.error });

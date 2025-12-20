@@ -1,21 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTodoStore } from "../store/useTodoStore";
+import { useCategoryStore } from "../../../categories/presentation/store/useCategoryStore";
 import { useRouterStore } from "../../../../components/router/store/useRouterStore";
 import { TextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { Routes } from "../../../../core/router/constants";
+import type { Category } from "../../../categories/domain/schema";
 
 export function TodoForm() {
+
     const [content, setContent] = useState("");
+    const [categoryId, setCategoryId] = useState<number | undefined>();
     const [isSaving, setIsSaving] = useState(false);
+
     const { addTodo, error } = useTodoStore();
+    const { categories, fetchCategories } = useCategoryStore();
     const { navigate } = useRouterStore();
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     const handleSubmit = async () => {
         if (content.trim() && !isSaving) {
             setIsSaving(true);
             try {
-                const result = await addTodo(content);
+                const result = await addTodo(content, categoryId);
                 if (result.isSuccess) {
                     navigate(Routes.HOME);
                 }
@@ -48,6 +58,29 @@ export function TodoForm() {
                 />
             </box>
 
+            <box flexDirection="column">
+                <text attributes={TextAttributes.BOLD}>Select Category (optional):</text>
+                <box gap={1} marginTop={1} flexWrap="wrap">
+                    <text
+                        style={{ fg: categoryId === undefined ? "cyan" : "white" }}
+                        onMouseDown={() => setCategoryId(undefined)}
+                        attributes={categoryId === undefined ? TextAttributes.BOLD : TextAttributes.DIM}
+                    >
+                        [None]
+                    </text>
+                    {categories.map((cat: Category) => (
+                        <text
+                            key={cat.id}
+                            style={{ fg: categoryId === cat.id ? "cyan" : "white" }}
+                            onMouseDown={() => setCategoryId(cat.id)}
+                            attributes={categoryId === cat.id ? TextAttributes.BOLD : TextAttributes.DIM}
+                        >
+                            [{cat.name}]
+                        </text>
+                    ))}
+                </box>
+            </box>
+
             {error && (
                 <text style={{ fg: error.color }} attributes={TextAttributes.BOLD}>
                     {error.message}
@@ -76,3 +109,4 @@ export function TodoForm() {
         </box>
     );
 }
+

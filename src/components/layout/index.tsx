@@ -3,20 +3,32 @@ import { useKeyboard } from "@opentui/react";
 import type { ReactNode } from "react";
 import { useRouterStore } from "../router/store/useRouterStore";
 import { useErrorStore } from "../../store/useErrorStore";
+import { Routes } from "../../core/router/constants";
 
 interface LayoutProps {
     children: ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-    const { currentTitle } = useRouterStore();
+    const { currentTitle, currentView, navigate } = useRouterStore();
     const { errors, clearErrors } = useErrorStore();
 
     useKeyboard((key) => {
+        if (key.name === "tab") {
+            let nextView = Routes.HOME;
+            if (currentView === Routes.HOME) nextView = Routes.CATEGORIES.LIST;
+            else if (currentView === Routes.CATEGORIES.LIST) nextView = Routes.ABOUT;
+            else if (currentView === Routes.ABOUT) nextView = Routes.HOME;
+            navigate(nextView as any);
+        }
+        if (key.name === "q") {
+            process.exit(0);
+        }
         if ((key.name === 'r' || key.name === 'R') && key.ctrl) {
             clearErrors();
         }
     });
+
 
     return (
         <box flexDirection="column" flexGrow={1} padding={1}>

@@ -11,7 +11,7 @@ export class GetTodosHandler implements IRequestHandler<GetTodosQuery, Todo[]> {
 
     async handle(request: GetTodosQuery): Promise<Result<Todo[]>> {
         try {
-            const todos = await this.repository.getAll();
+            const todos = await this.repository.getAll({ with: { category: true } });
             return Result.ok(todos);
         } catch (e: any) {
             return Result.fail(AppError.critical(e.message || "Failed to get todos"));
