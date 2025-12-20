@@ -73,15 +73,6 @@ export function TodoList() {
                     [ + ] ADD NEW TASK
                 </text>
             </box>
-
-            <box
-                onMouseDown={() => navigate(Routes.CATEGORIES.LIST)}
-                marginTop={1} borderStyle="single" borderColor="blue" padding={1}>
-                <text attributes={TextAttributes.BOLD}>
-                    [ G ] GO TO CATEGORIES
-                </text>
-            </box>
         </box>
-
     );
 }

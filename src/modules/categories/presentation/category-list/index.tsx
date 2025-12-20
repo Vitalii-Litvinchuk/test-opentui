@@ -38,14 +38,6 @@ export function CategoryList() {
                     [ + ] ADD NEW CATEGORY
                 </text>
             </box>
-
-            <box
-                onMouseDown={() => navigate(Routes.HOME)}
-                marginTop={1} borderStyle="single" borderColor="grey" padding={1}>
-                <text attributes={TextAttributes.DIM}>
-                    {"[ < ] BACK TO TODOS"}
-                </text>
-            </box>
         </box>
     );
 }

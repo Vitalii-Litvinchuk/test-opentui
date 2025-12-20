@@ -14,13 +14,6 @@ export function Layout({ children }: LayoutProps) {
     const { errors, clearErrors } = useErrorStore();
 
     useKeyboard((key) => {
-        if (key.name === "tab") {
-            let nextView = Routes.HOME;
-            if (currentView === Routes.HOME) nextView = Routes.CATEGORIES.LIST;
-            else if (currentView === Routes.CATEGORIES.LIST) nextView = Routes.ABOUT;
-            else if (currentView === Routes.ABOUT) nextView = Routes.HOME;
-            navigate(nextView as any);
-        }
         if (key.name === "q") {
             process.exit(0);
         }

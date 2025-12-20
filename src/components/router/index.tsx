@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useRouterStore } from "./store/useRouterStore";
 import { useKeyboard } from "@opentui/react";
 import { Routes } from "../../core/router/constants";
+import { Navigation } from "../navigation";
 
 interface RouteProps {
     path: string;
@@ -50,31 +51,18 @@ export function Router({ children }: RouterProps) {
         return discovered;
     }, [childRoutes.length, registeredRoutes]);
 
+    const activeRoute = allRoutes.find(r => r.path === currentView);
+
     useKeyboard((key: { name: string }) => {
         if (key.name === "tab") {
             const currentRoute = allRoutes.find(r => r.path === currentView);
-
-            if (currentRoute && !currentRoute.isMain) {
+            if ((currentRoute && currentRoute.isMain === false) || currentView === Routes.NAVIGATION) {
                 goBack();
-                return;
+            } else {
+                navigate(Routes.NAVIGATION);
             }
-            const mainRoutes = allRoutes.filter(r => r.isMain !== false);
-            const currentIndex = mainRoutes.findIndex(r => r.path === currentView);
-
-            if (mainRoutes.length > 1) {
-                const nextIndex = (currentIndex + 1) % mainRoutes.length;
-                const nextRoute = mainRoutes[nextIndex];
-                if (nextRoute) {
-                    navigate(nextRoute.path, nextRoute.title);
-                }
-            }
-        }
-        if (key.name === "q") {
-            process.exit(0);
         }
     });
-
-    const activeRoute = allRoutes.find(r => r.path === currentView);
 
     useEffect(() => {
         if (activeRoute?.title && activeRoute.title !== currentTitle) {
@@ -82,5 +70,12 @@ export function Router({ children }: RouterProps) {
         }
     }, [currentView, activeRoute?.title, currentTitle, navigate]);
 
-    return activeRoute ? <>{activeRoute.component}</> : null;
+    return (
+        <>
+            {allRoutes.find(r => r.path === Routes.NAVIGATION) === undefined && currentView === Routes.NAVIGATION && (
+                <Navigation />
+            )}
+            {activeRoute ? <>{activeRoute.component}</> : null}
+        </>
+    );
 }
