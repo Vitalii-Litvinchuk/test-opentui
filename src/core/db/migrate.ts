@@ -5,7 +5,7 @@ async function runMigrations() {
     console.log('⏳ Running migrations...');
 
     try {
-        await migrate(db, { migrationsFolder: "drizzle" });
+        await migrate(db, { migrationsFolder: "./src/core/db/drizzle" });
         console.log('✅ Migrations completed successfully');
     } catch (err) {
         console.error('❌ Migration failed');

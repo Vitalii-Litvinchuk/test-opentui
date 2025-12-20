@@ -1,5 +1,5 @@
-import { todos, type NewTodo, type Todo } from '../db/schema';
-import { BaseRepository } from './base-repository';
+import { BaseRepository } from '../../../core/repositories/base-repository';
+import { todos, type Todo, type NewTodo } from '../domain/schema';
 
 export class TodoRepository extends BaseRepository<Todo, NewTodo> {
     constructor() {

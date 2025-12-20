@@ -1,12 +1,16 @@
 import { TextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
-import { useTodoStore } from "../../core/store/useTodoStore";
+import { useTodoStore } from "../store/useTodoStore";
+import { useRouterStore } from "../../../../components/router/store/useRouterStore";
+import { Routes } from "../../../../core/router/constants";
+import moment from "moment";
 
 const VISIBLE_ITEMS = 5;
 
 export function TodoList() {
-    const { todos, fetchTodos, addTodo, toggleTodo, deleteTodo, error } = useTodoStore();
+    const { todos, fetchTodos, toggleTodo, deleteTodo, error } = useTodoStore();
+    const { navigate } = useRouterStore();
     const [scrollOffset, setScrollOffset] = useState(0);
 
     useEffect(() => {
@@ -50,7 +54,7 @@ export function TodoList() {
                             attributes={t.completed ? TextAttributes.BOLD : TextAttributes.DIM}
                             onMouseDown={() => toggleTodo(t.id, t.completed)}
                         >
-                            [{t.completed ? "x" : " "}] {t.content}
+                            [{t.completed ? "x" : " "}] {t.content} {moment(t.createdAt).fromNow()}
                         </text>
                         <text marginLeft={2} attributes={TextAttributes.BOLD} style={{ fg: "red" }} onMouseDown={() => deleteTodo(t.id)}> (del)</text>
                     </box>
@@ -62,10 +66,10 @@ export function TodoList() {
             </box>
 
             <box
-                onMouseDown={() => addTodo(`New Task ${new Date().toLocaleTimeString()}`)}
-                marginTop={2} borderStyle="rounded" borderColor="blue" padding={1}>
-                <text>
-                    [ CLICK HERE TO ADD RANDOM TASK ]
+                onMouseDown={() => navigate(Routes.TODO.ADD)}
+                marginTop={2} borderStyle="rounded" borderColor="green" padding={1}>
+                <text attributes={TextAttributes.BOLD}>
+                    [ + ] ADD NEW TASK
                 </text>
             </box>
         </box>

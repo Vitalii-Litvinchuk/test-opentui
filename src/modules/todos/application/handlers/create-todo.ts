@@ -1,8 +1,8 @@
-import { BaseRequest, type IRequestHandler } from "../../../mediator";
-import { Result } from "../../../common/result";
-import { TodoRepository } from "../../../repositories/todo-repository";
-import type { Todo } from "../../../db/schema";
-import { AppError } from "../../../common/app-error";
+import { BaseRequest, type IRequestHandler } from "../../../../core/mediator";
+import { Result } from "../../../../core/common/result";
+import { TodoRepository } from "../../data/todo-repository";
+import type { Todo } from "../../domain/schema";
+import { AppError } from "../../../../core/common/app-error";
 
 export class CreateTodoCommand extends BaseRequest<Todo> {
     constructor(public content: string) { super(); }

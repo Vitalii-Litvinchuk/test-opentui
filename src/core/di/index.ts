@@ -29,6 +29,14 @@ export class Container {
     }
 
     /**
+     * Register a class constructor as scoped.
+     * The instance will be created once per scope.
+     */
+    registerScopedClass<T>(key: string, constructor: new (...args: any[]) => T, dependencies: string[] = []) {
+        this.services.set(key, { type: 'scoped', constructor, dependencies });
+    }
+
+    /**
      * Register a transient class.
      * A new instance is created every time it is resolved.
      */
@@ -37,9 +45,16 @@ export class Container {
     }
 
     /**
+     * Create a new scope.
+     */
+    createScope(): Map<string, any> {
+        return new Map<string, any>();
+    }
+
+    /**
      * Resolve a dependency.
      */
-    resolve<T>(key: string): T {
+    resolve<T>(key: string, scope?: Map<string, any>): T {
         // 1. Check if it's a pre-registered instance
         if (this.singletons.has(key)) {
             return this.singletons.get(key);
@@ -55,19 +70,31 @@ export class Container {
             if (definition.instance) {
                 return definition.instance;
             }
-            const instance = this.createInstance(definition.constructor, definition.dependencies);
+            const instance = this.createInstance(definition.constructor, definition.dependencies, scope);
             definition.instance = instance;
             return instance;
         }
 
-        return this.createInstance(definition.constructor, definition.dependencies);
+        if (definition.type === 'scoped') {
+            if (!scope) {
+                throw new Error(`Service '${key}' is scoped but no scope was provided.`);
+            }
+            if (scope.has(key)) {
+                return scope.get(key);
+            }
+            const instance = this.createInstance(definition.constructor, definition.dependencies, scope);
+            scope.set(key, instance);
+            return instance;
+        }
+
+        return this.createInstance(definition.constructor, definition.dependencies, scope);
     }
 
-    private createInstance(constructor: new (...args: any[]) => any, depKeys: string[]) {
+    private createInstance(constructor: new (...args: any[]) => any, depKeys: string[], scope?: Map<string, any>) {
         if (!depKeys || depKeys.length === 0) {
             return new constructor();
         }
-        const args = depKeys.map(k => this.resolve(k));
+        const args = depKeys.map(k => this.resolve(k, scope));
         return new constructor(...args);
     }
 }

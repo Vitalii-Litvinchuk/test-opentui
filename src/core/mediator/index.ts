@@ -37,7 +37,9 @@ export class Mediator {
         }
 
         try {
-            const handler = container.resolve<IRequestHandler<any, TResponse>>(handlerKey);
+            const scope = container.createScope();
+
+            const handler = container.resolve<IRequestHandler<any, TResponse>>(handlerKey, scope);
             return handler.handle(request);
         } catch (e: any) {
             return Result.fail(AppError.critical(`Failed to resolve handler: ${e.message}`));

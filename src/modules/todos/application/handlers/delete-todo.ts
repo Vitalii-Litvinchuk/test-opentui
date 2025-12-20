@@ -1,7 +1,7 @@
-import { BaseRequest, type IRequestHandler } from "../../../mediator";
-import { Result } from "../../../common/result";
-import { TodoRepository } from "../../../repositories/todo-repository";
-import { AppError } from "../../../common/app-error";
+import { BaseRequest, type IRequestHandler } from "../../../../core/mediator";
+import { Result } from "../../../../core/common/result";
+import { TodoRepository } from "../../data/todo-repository";
+import { AppError } from "../../../../core/common/app-error";
 
 export class DeleteTodoCommand extends BaseRequest<void> {
     constructor(public id: number) { super(); }
